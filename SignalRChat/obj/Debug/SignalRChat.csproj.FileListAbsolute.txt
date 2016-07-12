@@ -1,0 +1,17 @@
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\SignalRChat.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\SignalRChat.pdb
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.AspNet.SignalR.Core.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.AspNet.SignalR.Owin.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.Owin.Host.SystemWeb.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.Web.Infrastructure.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Newtonsoft.Json.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Owin.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.AspNet.SignalR.Core.xml
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.AspNet.SignalR.Owin.xml
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Microsoft.Owin.Host.SystemWeb.xml
+D:\DES_TRY\SignalRChatRoom\SignalRChat\bin\Newtonsoft.Json.xml
+D:\DES_TRY\SignalRChatRoom\SignalRChat\obj\Debug\SignalRChat.csprojResolveAssemblyReference.cache
+D:\DES_TRY\SignalRChatRoom\SignalRChat\obj\Debug\SignalRChat.dll
+D:\DES_TRY\SignalRChatRoom\SignalRChat\obj\Debug\SignalRChat.pdb
