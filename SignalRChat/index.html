@@ -318,27 +318,33 @@
                 <input id="btnStartChat" type="button" class="submitButton" value="Start Chat" />
             </div>
         </div>
-
         <div id="divChat" class="chatRoom">
             <div class="title">
-                Welcome to Chat Room [<span id='spanUser'></span>]
-
+                Usuarios en espera
             </div>
-            <div class="content">
-                <div id="divChatWindow" class="chatWindow">
-                </div>
                 <div id="divusers" class="users">
                 </div>
             </div>
-            <div class="messageBar">
-                <input class="textbox" type="text" id="txtMessage" />
-                <input id="btnSendMsg" type="button" value="Send" class="submitButton" />
-            </div>
-        </div>
+            <div id="divChat" class="chatRoom">
+                <div class="title">
+                    Welcome to Chat Room [<span id='spanUser'></span>]
 
-        <input id="hdId" type="hidden" />
-        <input id="hdUserName" type="hidden" />
-    </div>
+                </div>
+                <div class="content">
+                    <div id="divChatWindow" class="chatWindow">
+                    </div>
+                    <div id="divusers" class="users">
+                    </div>
+                </div>
+                <div class="messageBar">
+                    <input class="textbox" type="text" id="txtMessage" />
+                    <input id="btnSendMsg" type="button" value="Send" class="submitButton" />
+                </div>
+            </div>
+
+            <input id="hdId" type="hidden" />
+            <input id="hdUserName" type="hidden" />
+        </div>
 
 </body>
 </html>
