@@ -25,13 +25,15 @@ namespace SignalRChat
 
             if (ConnectedUsers.Count(x => x.ConnectionId == id) == 0)
             {
-                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = userName , isConsultor = checkConsultor(userName) });
+                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = userName , IsConsultor = checkConsultor(userName) });
 
                 // send to caller
-                Clients.Caller.onConnected(id, userName, ConnectedUsers, CurrentMessage);
+                Clients.Caller.onConnected(id, userName, ConnectedUsers.Where(x => x.IsConsultor != false), CurrentMessage);
 
                 // send to all except caller client
-                Clients.AllExcept(id).onNewUserConnected(id, userName);
+                List<String> ids =  ConnectedUsers.Where(x => x.IsConsultor != false).Select(x => x.ConnectionId).ToList();
+                ids.Add(id);
+                Clients.AllExcept(ids.ToArray()).onNewUserConnected(id, userName);
 
             }
 
