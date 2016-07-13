@@ -119,8 +119,8 @@
 
                 // Add All Users
                 for (i = 0; i < allUsers.length; i++) {
-
-                    AddUser(chatHub, allUsers[i].ConnectionId, allUsers[i].UserName);
+                    if (!allUsers[i].isConsultor)
+                        AddUser(chatHub, allUsers[i].ConnectionId, allUsers[i].UserName);
                 }
 
                 // Add Existing Messages

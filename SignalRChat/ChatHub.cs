@@ -25,7 +25,7 @@ namespace SignalRChat
 
             if (ConnectedUsers.Count(x => x.ConnectionId == id) == 0)
             {
-                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = userName });
+                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = userName , isConsultor = checkConsultor(userName) });
 
                 // send to caller
                 Clients.Caller.onConnected(id, userName, ConnectedUsers, CurrentMessage);
@@ -35,6 +35,12 @@ namespace SignalRChat
 
             }
 
+        }
+
+        public Boolean checkConsultor(string usname)
+        {
+            // Comprobar array de consultores
+            return true;
         }
 
         public void SendMessageToAll(string userName, string message)
