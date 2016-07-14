@@ -7,6 +7,6 @@ namespace SignalRChat.Common
 {
     public class ConsultorDetail : UserDetail
     {
-        public List<String> UsuariosAsignados { get;  set; }
+        public List<UserDetail> UsuariosAsignados { get;  set; }
     }
 }

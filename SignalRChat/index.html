@@ -137,6 +137,28 @@
                 AddUser(chatHub, id, name);
             }
 
+            chatHub.client.addUserAssigned = function (id, name) {
+
+                var userId = $('#hdId').val();
+
+                var code = $('<a id="' + id + '" class="user" >' + name + '</br><a>');
+
+                $("#divusers2").append(code);
+            }
+
+            chatHub.client.addOtherConsultor = function (id, name, listUsers) {
+
+                var userId = $('#hdId').val();
+
+                var code = $('<a id="' + id + '" class="user" >' + name + '</br><a>');
+
+                for (var elem in listUsers) {
+                    var usu = $('<a id="' + elem.ConnectionId + '" class="user" >' + elem.UserName + '</br><a>');
+
+                    $('#' + id).append(usu);
+                }
+                $("#divusers3").append(code);
+            }
 
             // On User Disconnected
             chatHub.client.onUserDisconnected = function (id, userName) {
@@ -170,6 +192,25 @@
 
             }
 
+
+            chatHub.client.addAllConsultorsInfo = function (listaCons) {
+
+                var userId = $('#hdId').val();
+
+
+                for (var cons in listaCons) {
+
+                    var code = $('<a id="' + listaCons[cons].ConnectionId + '" class="user" >' + listaCons[cons].UserName + '</br><a>');
+                    $("#divusers3").append(code);
+
+                    for (var elem in listaCons[cons].UsuariosAsignados) {
+                        //code = code + UsuariosAsignados[elem].ConnectionId;
+                        var usu = $('<a id="' + listaCons[cons].UsuariosAsignados[elem].ConnectionId + '" class="user" > ->' + listaCons[cons].UsuariosAsignados[elem].UserName + '</br><a>');
+
+                        $("#divusers3").append(usu);
+                    }
+                }
+            }
         }
 
         function AddUser(chatHub, id, name) {
@@ -201,25 +242,7 @@
             
         }
 
-        function AddUserAssigned(chatHub, id, name) {
-
-            var userId = $('#hdId').val();
-
-            var code = "";
-            code = $('<a id="' + id + '" class="user" >' + name + '</br><a>');
-
-            $(code).dblclick(function () {
-
-                var id = $(this).attr('id');
-
-                if (userId != id)
-                    OpenPrivateChatWindow(chatHub, id, name);
-
-            });
-
-            $("#divusers2").append(code);
-
-        }
+       
 
         function AddMessage(userName, message) {
             $('#divChatWindow').append('<div class="message"><span class="userName">' + userName + '</span>: ' + message + '</div>');
@@ -321,7 +344,7 @@
         <div id="divLogin" class="login">
             <div>
                 Your Name:<br />
-            <input id="txtNickName" type="text" class="textBox" />
+                <input id="txtNickName" type="text" class="textBox" />
             </div>
             <div id="divButton">
                 <input id="btnStartChat" type="button" class="submitButton" value="Start Chat" />
@@ -329,38 +352,40 @@
         </div>
         <div id="divChat" class="chatRoom">
             <div class="title">
-                Usuarios a la espera 
+                Usuarios a la espera
             </div>
-                <div id="divusers" class="users">
-                </div>
+            <div id="divusers" class="users">
+            </div>
         </div>
         <div id="divChat" class="chatRoom">
             <div class="title">
-                Usuarios asignados
+                Usuarios asignados a otros Consultores
             </div>
-            <div id="divusers2" class="users">
+            <div id="divusers3" class="users">
             </div>
         </div>
-            <div id="divChat" class="chatRoom">
-                <div class="title">
-                    Welcome to Chat Room [<span id='spanUser'></span>]
 
+        <div id="divChat" class="chatRoom">
+            <div class="title">
+                Welcome to Chat Room [<span id='spanUser'></span>]
+
+            </div>
+            <div class="content">
+                <div id="divChatWindow" class="chatWindow">
                 </div>
-                <div class="content">
-                    <div id="divChatWindow" class="chatWindow">
-                    </div>
-                    <div id="divusers" class="users">
-                    </div>
-                </div>
-                <div class="messageBar">
-                    <input class="textbox" type="text" id="txtMessage" />
-                    <input id="btnSendMsg" type="button" value="Send" class="submitButton" />
+                <div id="divusers2" class="users">
                 </div>
             </div>
 
-            <input id="hdId" type="hidden" />
-            <input id="hdUserName" type="hidden" />
+            <div class="messageBar">
+                <input class="textbox" type="text" id="txtMessage" />
+                <input id="btnSendMsg" type="button" value="Send" class="submitButton" />
+            </div>
         </div>
+
+        <input id="hdId" type="hidden" />
+        <input id="hdUserName" type="hidden" />
+    </div>
 
 </body>
 </html>

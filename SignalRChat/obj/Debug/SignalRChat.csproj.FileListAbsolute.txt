@@ -30,6 +30,6 @@ C:\Users\vdiaz\Documents\Visual Studio 2015\Projects\GitHub\havachat\SignalRChat
 C:\Users\vdiaz\Documents\Visual Studio 2015\Projects\GitHub\havachat\SignalRChat\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
 C:\Users\vdiaz\Documents\Visual Studio 2015\Projects\GitHub\havachat\SignalRChat\bin\Microsoft.Owin.Host.SystemWeb.xml
 C:\Users\vdiaz\Documents\Visual Studio 2015\Projects\GitHub\havachat\SignalRChat\bin\Newtonsoft.Json.xml
-C:\Users\vdiaz\Documents\Visual Studio 2015\Projects\GitHub\havachat\SignalRChat\obj\Debug\SignalRChat.csprojResolveAssemblyReference.cache
 C:\Users\vdiaz\Documents\Visual Studio 2015\Projects\GitHub\havachat\SignalRChat\obj\Debug\SignalRChat.dll
 C:\Users\vdiaz\Documents\Visual Studio 2015\Projects\GitHub\havachat\SignalRChat\obj\Debug\SignalRChat.pdb
+C:\Users\vdiaz\Documents\Visual Studio 2015\Projects\GitHub\havachat\SignalRChat\obj\Debug\SignalRChat.csprojResolveAssemblyReference.cache

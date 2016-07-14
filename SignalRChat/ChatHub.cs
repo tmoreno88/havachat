@@ -29,7 +29,7 @@ namespace SignalRChat
         public Boolean checkConsultor(string usname)
         {
             // Comprobar array de consultores
-            return (usname.Equals("paco") || usname.Equals("manolo")) ? true : false;
+            return (usname.Equals("paco") || usname.Equals("manolo") || usname.Equals("pepito")) ? true : false;
         }
 
         public String[] GetNoConsultores()
@@ -51,17 +51,29 @@ namespace SignalRChat
             if (QueueUsers.FindIndex(x => x.ConnectionId == id) == -1
                 && TalkingUsers.FindIndex(x => x.ConnectionId == id) == -1
                 && ConsultorsUsers.FindIndex(x => x.ConnectionId == id) == -1)
-            {
-
-                
+            {               
                 // Si el usuario es un consultor, se le devuelve la lista de no consultores que no han sido asignados
                 if (checkConsultor(userName))
                 {
 
-                    ConsultorDetail cons = new ConsultorDetail { ConnectionId = id, UserName = userName, IsConsultor = checkConsultor(userName), IsAsignado = false };
+                    ConsultorDetail cons = new ConsultorDetail { ConnectionId = id, UserName = userName, IsConsultor = checkConsultor(userName), IsAsignado = false,UsuariosAsignados = new List<UserDetail>()};
+                    // Cogemos la lista de no consultores  junto con el nuevo consultor para crear el filtro de los usuarios
+                    // a los que no se le tiene que actualizar la lista de usuarios conectados 
+                    var conss = GetNoConsultores().ToList();
+                    conss.Add(id);
 
+                    // Cargamos los datos de los consultores que ya estaban conectados
+                    // en el nuevo consultor
+                    Clients.Caller.addAllConsultorsInfo(ConsultorsUsers);
+
+                    // Incorporamos a la lista de los consultores activos el nuevo
                     ConsultorsUsers.Add(cons);
-                    Clients.Caller.onConnected(id, userName, QueueUsers.Where(x => x.IsConsultor == false && x.IsAsignado == false), CurrentMessage);
+
+                    // Actualizamos al resto de consultores la lista de estos
+                    Clients.AllExcept(conss.ToArray()).addOtherConsultor(id, userName, new List<Object>());
+
+                    // Muesta el listado de los usuarios (no consultores y no asignados) al nuevo consultor
+                    Clients.Caller.onConnected(id, userName, QueueUsers, CurrentMessage);
                 } 
 
 
@@ -96,17 +108,14 @@ namespace SignalRChat
 
             if (cons != null && usu != null)
             {
-                if(cons.UsuariosAsignados == null)
-                {
-                    cons.UsuariosAsignados = new List<string>();
-                }
-
-                cons.UsuariosAsignados.Add(usu.ConnectionId);
+                cons.UsuariosAsignados.Add(usu);
 
                 TalkingUsers.Add(usu);
                 QueueUsers.Remove(usu);
+
                 Clients.AllExcept(GetNoConsultores()).onUserDisconnected(usu.ConnectionId, usu.UserName);
 
+                Clients.Caller.addUserAssigned(usu.ConnectionId, usu.UserName);
             }
 
         }
