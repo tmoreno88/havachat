@@ -4,17 +4,43 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using SignalRChat.Common;
+using System.Diagnostics;
 
 namespace SignalRChat
 {
     public class ChatHub : Hub
     {
         #region Data Members
+        // Consultores
+        static List<ConsultorDetail> ConsultorsUsers = new List<ConsultorDetail>();
 
-        static List<UserDetail> ConnectedUsers = new List<UserDetail>();
+        // Medicos que estan en la cola de espera
+        static List<UserDetail> QueueUsers = new List<UserDetail>();
+
+        // Medicos asignados a un consultor
+        static List<UserDetail> TalkingUsers = new List<UserDetail>();
+
         static List<MessageDetail> CurrentMessage = new List<MessageDetail>();
 
         #endregion
+
+        #region Usuarios
+
+        public Boolean checkConsultor(string usname)
+        {
+            // Comprobar array de consultores
+            return (usname.Equals("paco") || usname.Equals("manolo")) ? true : false;
+        }
+
+        public String[] GetNoConsultores()
+        {
+            List<String> idsCola = QueueUsers.Select(x => x.ConnectionId).ToList();
+            List<String> ids = idsCola.Concat(TalkingUsers.Select(x => x.ConnectionId)).ToList();
+
+            return ids.ToArray();
+        }
+        #endregion      
+
 
         #region Methods
 
@@ -22,36 +48,67 @@ namespace SignalRChat
         {
             var id = Context.ConnectionId;
 
-
-            if (ConnectedUsers.Count(x => x.ConnectionId == id) == 0)
+            if (QueueUsers.FindIndex(x => x.ConnectionId == id) == -1
+                && TalkingUsers.FindIndex(x => x.ConnectionId == id) == -1
+                && ConsultorsUsers.FindIndex(x => x.ConnectionId == id) == -1)
             {
-                ConnectedUsers.Add(new UserDetail { ConnectionId = id, UserName = userName , IsConsultor = checkConsultor(userName) });
 
-                // send to caller
-                Clients.Caller.onConnected(id, userName, ConnectedUsers.Where(x => x.IsConsultor != false), CurrentMessage);
+                
+                // Si el usuario es un consultor, se le devuelve la lista de no consultores que no han sido asignados
+                if (checkConsultor(userName))
+                {
 
-                // send to all except caller client
-                List<String> ids =  ConnectedUsers.Where(x => x.IsConsultor != false).Select(x => x.ConnectionId).ToList();
-                ids.Add(id);
-                Clients.AllExcept(ids.ToArray()).onNewUserConnected(id, userName);
+                    ConsultorDetail cons = new ConsultorDetail { ConnectionId = id, UserName = userName, IsConsultor = checkConsultor(userName), IsAsignado = false };
 
+                    ConsultorsUsers.Add(cons);
+                    Clients.Caller.onConnected(id, userName, QueueUsers.Where(x => x.IsConsultor == false && x.IsAsignado == false), CurrentMessage);
+                } 
+
+
+                // Si el usuario no es un consultor, se le avisará a todos los excepto a los que no sean consultores
+                else
+                {
+                    UserDetail usuario = new UserDetail { ConnectionId = id, UserName = userName, IsConsultor = checkConsultor(userName), IsAsignado = false };
+
+                    QueueUsers.Add(usuario);
+                    Clients.AllExcept(GetNoConsultores()).onNewUserConnected(id, userName);
+                }
             }
 
         }
 
-        public Boolean checkConsultor(string usname)
-        {
-            // Comprobar array de consultores
-            return true;
-        }
+      
 
         public void SendMessageToAll(string userName, string message)
         {
             // store last 100 messages in cache
             AddMessageinCache(userName, message);
 
-            // Broad cast message
-            Clients.All.messageReceived(userName, message);
+            // Broad cast message 
+            Clients.AllExcept(GetNoConsultores()).messageReceived(userName, message);
+        }
+
+        public void AsignaUsuarioAConsultorActual(string usuario)
+        {
+            string consultorID = Context.ConnectionId;
+            ConsultorDetail cons = ConsultorsUsers.Where(x => x.ConnectionId == consultorID).FirstOrDefault();
+            UserDetail usu = QueueUsers.Where(x => x.UserName == usuario).FirstOrDefault();
+
+            if (cons != null && usu != null)
+            {
+                if(cons.UsuariosAsignados == null)
+                {
+                    cons.UsuariosAsignados = new List<string>();
+                }
+
+                cons.UsuariosAsignados.Add(usu.ConnectionId);
+
+                TalkingUsers.Add(usu);
+                QueueUsers.Remove(usu);
+                Clients.AllExcept(GetNoConsultores()).onUserDisconnected(usu.ConnectionId, usu.UserName);
+
+            }
+
         }
 
         public void SendPrivateMessage(string toUserId, string message)
@@ -59,8 +116,17 @@ namespace SignalRChat
 
             string fromUserId = Context.ConnectionId;
 
-            var toUser = ConnectedUsers.FirstOrDefault(x => x.ConnectionId == toUserId) ;
-            var fromUser = ConnectedUsers.FirstOrDefault(x => x.ConnectionId == fromUserId);
+            var usu1 = (UserDetail) ConsultorsUsers.FirstOrDefault(x => x.ConnectionId == fromUserId);
+            var usu2 = (UserDetail) ConsultorsUsers.FirstOrDefault(x => x.ConnectionId == toUserId);
+
+            if(usu1 == null){
+                usu1 = TalkingUsers.FirstOrDefault(x => x.ConnectionId == fromUserId);
+            }else{
+                usu2 = TalkingUsers.FirstOrDefault(x => x.ConnectionId == toUserId);
+            }
+
+            var toUser = usu2;
+            var fromUser = usu1;
 
             if (toUser != null && fromUser!=null)
             {
@@ -75,14 +141,14 @@ namespace SignalRChat
 
         public override System.Threading.Tasks.Task OnDisconnected()
         {
-            var item = ConnectedUsers.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var item = QueueUsers.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
             if (item != null)
             {
-                ConnectedUsers.Remove(item);
+                QueueUsers.Remove(item);
 
                 var id = Context.ConnectionId;
-                Clients.All.onUserDisconnected(id, item.UserName);
-
+                Clients.AllExcept(GetNoConsultores()).onUserDisconnected(id, item.UserName);
             }
 
             return base.OnDisconnected();

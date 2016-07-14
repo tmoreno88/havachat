@@ -9,6 +9,7 @@ namespace SignalRChat.Common
     {
         public string ConnectionId { get; set; }
         public string UserName { get; set; }
-        public Boolean isConsultor { get; set; }
+        public Boolean IsConsultor { get; set; }
+        public Boolean IsAsignado { get; set; }
     }
 }
